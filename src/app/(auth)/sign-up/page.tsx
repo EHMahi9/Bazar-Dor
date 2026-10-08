@@ -44,11 +44,10 @@ export default function SignUpPage() {
         password: password.trim(),
       });
 
-      if (res.error) {
+      if (res?.error) {
         const errorText = res.error.message || "রেজিস্ট্রেশন করতে সমস্যা হয়েছে";
         setErrorMessage(errorText);
         toast.error(errorText);
-        setIsLoading(false);
         return;
       }
 
@@ -60,6 +59,7 @@ export default function SignUpPage() {
       const msg = errObj?.message || "রেজিস্ট্রেশন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।";
       setErrorMessage(msg);
       toast.error(msg);
+    } finally {
       setIsLoading(false);
     }
   };

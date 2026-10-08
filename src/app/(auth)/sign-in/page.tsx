@@ -37,11 +37,10 @@ function SignInForm() {
         password: password.trim(),
       });
 
-      if (res.error) {
+      if (res?.error) {
         const errorText = res.error.message || "ভুল ইমেইল অথবা পাসওয়ার্ড";
         setErrorMessage(errorText);
         toast.error(errorText);
-        setIsLoading(false);
         return;
       }
 
@@ -53,6 +52,7 @@ function SignInForm() {
       const msg = errObj?.message || "লগইন করতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।";
       setErrorMessage(msg);
       toast.error(msg);
+    } finally {
       setIsLoading(false);
     }
   };

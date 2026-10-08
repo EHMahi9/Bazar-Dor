@@ -12,7 +12,8 @@ if (typeof process !== "undefined" && process.env.NODE_ENV !== "production") {
   }
 }
 
-const mongoUri = process.env.BETTER_AUTH_DB_URL || process.env.MONGODB_URI || "";
+const rawUri = process.env.BETTER_AUTH_DB_URL || process.env.MONGODB_URI || "";
+const mongoUri = rawUri.trim().replace(/^["']|["']$/g, "");
 
 // Global cached MongoClient for serverless environments (prevents connection leaks and ensures reuse)
 declare global {
@@ -22,9 +23,10 @@ declare global {
 
 if (!global._mongoClientPromise) {
   global._mongoClientPromise = new MongoClient(mongoUri || "mongodb://localhost:27017/bazardor", {
-    connectTimeoutMS: 10000,
-    serverSelectionTimeoutMS: 10000,
+    connectTimeoutMS: 8000,
+    serverSelectionTimeoutMS: 8000,
     maxPoolSize: 10,
+    retryWrites: true,
   });
 }
 
@@ -32,10 +34,17 @@ const client = global._mongoClientPromise;
 const db = client.db("bazardor_db");
 
 const getBaseURL = () => {
-  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  if (process.env.NODE_ENV === "production") return "https://bazar-dor-mahi.vercel.app";
-  return "http://localhost:3000";
+  // In production, force live HTTPS domain to prevent localhost mismatch if Vercel has stale env vars
+  if (process.env.NODE_ENV === "production") {
+    if (process.env.BETTER_AUTH_URL && process.env.BETTER_AUTH_URL.startsWith("https://")) {
+      return process.env.BETTER_AUTH_URL;
+    }
+    if (process.env.VERCEL_URL) {
+      return `https://${process.env.VERCEL_URL}`;
+    }
+    return "https://bazar-dor-mahi.vercel.app";
+  }
+  return process.env.BETTER_AUTH_URL || "http://localhost:3000";
 };
 
 export const auth = betterAuth({
