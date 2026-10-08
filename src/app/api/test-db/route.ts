@@ -14,10 +14,11 @@ export async function GET() {
   };
 
   try {
-    const directUri =
-      "mongodb://mahi24235001_db_user:ERuLMxUBpxYP01Ft@ac-4k3kkb3-shard-00-00.shcpuau.mongodb.net:27017,ac-4k3kkb3-shard-00-01.shcpuau.mongodb.net:27017,ac-4k3kkb3-shard-00-02.shcpuau.mongodb.net:27017/?ssl=true&replicaSet=atlas-10u5y4-shard-0&authSource=admin&appName=First";
+    const uri =
+      process.env.BETTER_AUTH_DB_URL ||
+      "mongodb+srv://mahi24235001_db_user:ERuLMxUBpxYP01Ft@first.shcpuau.mongodb.net/?appName=First";
 
-    const client = new MongoClient(directUri, { serverSelectionTimeoutMS: 5000 });
+    const client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000 });
     await client.connect();
     const ping = await client.db("bazardor_db").command({ ping: 1 });
     await client.close();
