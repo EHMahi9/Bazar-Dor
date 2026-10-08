@@ -6,7 +6,7 @@ import ProductCard from "../../components/ProductCard";
 import ProductSkeleton from "../../components/ProductSkeleton";
 import SortDropdown from "../../components/SortDropdown";
 import { Category, Product, SortOption } from "@/types";
-import { sortProducts } from "@/lib/utils";
+import { sortProducts, toBengaliNumber } from "@/lib/utils";
 import { ArrowLeft, Home } from "lucide-react";
 
 interface CategoryPageProps {
@@ -76,14 +76,14 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-slate-800 rounded-2xl animate-pulse" />
+        <div className="bg-white border border-gray-200/80 rounded-2xl p-6 sm:p-8 flex items-center gap-4 animate-pulse">
+          <div className="w-14 h-14 bg-gray-100 rounded-full" />
           <div className="space-y-2">
-            <div className="w-48 h-8 bg-slate-800 rounded-lg animate-pulse" />
-            <div className="w-32 h-4 bg-slate-800 rounded animate-pulse" />
+            <div className="w-40 h-7 bg-gray-200 rounded-lg" />
+            <div className="w-56 h-4 bg-gray-100 rounded" />
           </div>
         </div>
-        <ProductSkeleton count={8} />
+        <ProductSkeleton count={6} />
       </div>
     );
   }
@@ -92,19 +92,19 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   if (!category && products.length === 0) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center space-y-5 shadow-2xl">
-          <div className="w-20 h-20 mx-auto rounded-3xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-4xl">
+        <div className="max-w-md w-full bg-white border border-gray-200 rounded-2xl p-8 text-center space-y-5 shadow-sm">
+          <div className="w-16 h-16 mx-auto rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-3xl">
             ⚠️
           </div>
-          <div className="space-y-2">
-            <h1 className="text-2xl font-black text-white">ক্যাটাগরি পাওয়া যায়নি</h1>
-            <p className="text-sm text-slate-400">
+          <div className="space-y-1.5">
+            <h1 className="text-xl font-bold text-gray-900">ক্যাটাগরি পাওয়া যায়নি</h1>
+            <p className="text-sm text-gray-500">
               আপনি যে ক্যাটাগরিটি খুঁজছেন সেটি বিদ্যমান নেই অথবা এতে কোনো পণ্য যুক্ত নেই।
             </p>
           </div>
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
+            className="inline-flex items-center justify-center gap-2 w-full py-3 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition-all shadow-sm"
           >
             <Home className="w-4 h-4" />
             <span>হোম পেজে ফিরে যান</span>
@@ -114,59 +114,56 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     );
   }
 
+  const categoryName = category?.nameBn || slug;
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
-      {/* Navigation Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-400">
-        <Link href="/" className="hover:text-emerald-400 flex items-center gap-1 transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          <span>হোম পেজ</span>
-        </Link>
-        <span>/</span>
-        <span className="text-slate-200 font-semibold">
-          {category?.nameBn || slug}
-        </span>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6">
+      {/* Category Header Card (Figma Style) */}
+      <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 shadow-sm flex items-center gap-5">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-3xl sm:text-4xl shadow-inner shrink-0">
+          {category?.icon || "🏷️"}
+        </div>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black text-gray-900">
+            {categoryName}
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">
+            মোট {toBengaliNumber(products.length)} প্রকার {categoryName}-এর দাম ও পরিবর্তন
+          </p>
+        </div>
       </div>
 
-      {/* Category Header with Title, Icon & Sorting */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-900 border border-slate-700/80 flex items-center justify-center text-3xl sm:text-4xl shadow-inner">
-            {category?.icon || "🏷️"}
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white">
-              {category?.nameBn || slug}
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              মোট {products.length} টি পণ্যের আজকের বাজার মূল্য তালিকা
-            </p>
-          </div>
-        </div>
+      {/* Filter / Sort Control Bar (Figma Style) */}
+      <div className="bg-white border border-gray-200/90 rounded-2xl px-5 py-3.5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p className="text-xs sm:text-sm text-gray-500">
+          মোট <span className="font-bold text-gray-800">{toBengaliNumber(products.length)}টি</span> পণ্য পাওয়া গেছে
+        </p>
 
-        {/* Sort control */}
         {products.length > 0 && (
-          <SortDropdown value={sortOption} onChange={setSortOption} />
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-gray-500">সাজান:</span>
+            <SortDropdown value={sortOption} onChange={setSortOption} />
+          </div>
         )}
       </div>
 
       {/* Product List Grid or Empty State */}
       {sortedProducts.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           {sortedProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
       ) : (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-10 text-center space-y-4">
+        <div className="bg-white border border-gray-200 rounded-2xl p-10 text-center space-y-4 shadow-sm">
           <span className="text-4xl">🧺</span>
-          <h3 className="text-xl font-bold text-white">এই ক্যাটাগরিতে কোনো পণ্য নেই</h3>
-          <p className="text-sm text-slate-400 max-w-sm mx-auto">
+          <h3 className="text-lg font-bold text-gray-900">এই ক্যাটাগরিতে কোনো পণ্য নেই</h3>
+          <p className="text-sm text-gray-500 max-w-sm mx-auto">
             বর্তমানে এই ক্যাটাগরিতে কোনো পণ্যের তালিকা পাওয়া যায়নি। অন্যান্য পণ্য দেখতে হোম পেজে যান।
           </p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-slate-950 font-bold rounded-xl text-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition-all"
           >
             <Home className="w-4 h-4" />
             <span>হোম পেজে ফিরে যান</span>

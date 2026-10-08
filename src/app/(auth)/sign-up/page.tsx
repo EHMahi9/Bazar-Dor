@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
-import { UserPlus, User, Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, Eye, EyeOff, ArrowLeft } from "lucide-react";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -13,7 +13,9 @@ export default function SignUpPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -22,14 +24,21 @@ export default function SignUpPage() {
     setErrorMessage("");
 
     if (!name.trim() || !email.trim() || !password.trim()) {
-      const msg = "সকল তথ্য সঠিকভাবে পূরণ করুন";
+      const msg = "অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন";
       setErrorMessage(msg);
       toast.error(msg);
       return;
     }
 
-    if (password.length < 6) {
-      const msg = "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে";
+    if (password.length < 8) {
+      const msg = "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে";
+      setErrorMessage(msg);
+      toast.error(msg);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      const msg = "উভয় পাসওয়ার্ড মেলেনি";
       setErrorMessage(msg);
       toast.error(msg);
       return;
@@ -52,7 +61,6 @@ export default function SignUpPage() {
       }
 
       toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! এবার লগইন করুন।");
-      // As per requirement: navigate him to his login page
       router.push("/sign-in");
     } catch (err: unknown) {
       const errObj = err as { message?: string };
@@ -78,22 +86,21 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-10 shadow-2xl space-y-7">
-        {/* Title & Header */}
-        <div className="text-center space-y-2">
-          <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center mx-auto text-emerald-400">
-            <UserPlus className="w-7 h-7" />
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white">নতুন অ্যাকাউন্ট তৈরি</h1>
-          <p className="text-xs sm:text-sm text-slate-400">
-            বিনা খরচে সাইন আপ করে সব বিস্তারিত দাম দেখুন।
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-[#f4f6f8]">
+      <div className="w-full max-w-md bg-white border border-gray-200/90 rounded-3xl p-8 sm:p-10 shadow-xs space-y-6">
+        {/* Title & Header matching Figma */}
+        <div className="text-center space-y-1.5">
+          <h1 className="text-2xl sm:text-3xl font-black text-gray-900">
+            অ্যাকাউন্ট তৈরি করুন
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-500">
+            নিত্য পণ্যের বাজার দর এক ক্লিকে দেখার জন্য অ্যাকাউন্ট তৈরি করুন।
           </p>
         </div>
 
-        {/* Error alert inside form */}
+        {/* Error Alert inside form */}
         {errorMessage && (
-          <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs sm:text-sm font-medium">
+          <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs sm:text-sm font-medium">
             {errorMessage}
           </div>
         )}
@@ -102,69 +109,96 @@ export default function SignUpPage() {
         <form onSubmit={handleSignUp} className="space-y-4">
           {/* Name field */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-300" htmlFor="name">
-              আপনার পুরো নাম
+            <label className="block text-xs font-bold text-gray-700" htmlFor="name">
+              নাম
             </label>
             <div className="relative">
-              <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+              <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 id="name"
                 name="name"
                 type="text"
-                placeholder="যেমন: রহিম উদ্দিন"
+                placeholder="উদা: রহিম উদ্দিন"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600 transition-colors shadow-2xs"
               />
             </div>
           </div>
 
           {/* Email field */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-300" htmlFor="email">
-              ইমেইল অ্যাড্রেস
+            <label className="block text-xs font-bold text-gray-700" htmlFor="email">
+              ইমেইল
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="yourname@example.com"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600 transition-colors shadow-2xs"
               />
             </div>
           </div>
 
           {/* Password field */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-300" htmlFor="password">
+            <label className="block text-xs font-bold text-gray-700" htmlFor="password">
               পাসওয়ার্ড
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড"
+                placeholder="কমপক্ষে ৮ অক্ষর"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
-                className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 pr-10 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-10 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600 transition-colors shadow-2xs"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 aria-label="Toggle password visibility"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Confirm Password field */}
+          <div className="space-y-1.5">
+            <label className="block text-xs font-bold text-gray-700" htmlFor="confirmPassword">
+              পাসওয়ার্ড নিশ্চিত করুন
+            </label>
+            <div className="relative">
+              <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="আবার লিখুন"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-10 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600 transition-colors shadow-2xs"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label="Toggle confirm password visibility"
+              >
+                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
@@ -173,13 +207,13 @@ export default function SignUpPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-emerald-500/20 active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="w-full py-3 px-4 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-sm transition-all shadow-xs active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {isLoading ? (
-              <div className="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
-                <span>রেজিস্টার করুন</span>
+                <span>অ্যাকাউন্ট তৈরি করুন</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -188,11 +222,11 @@ export default function SignUpPage() {
 
         {/* Divider */}
         <div className="relative flex items-center justify-center">
-          <div className="border-t border-slate-800 w-full" />
-          <span className="bg-slate-900 px-3 text-xs text-slate-500 font-semibold uppercase tracking-wider">
+          <div className="border-t border-gray-200 w-full" />
+          <span className="bg-white px-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">
             অথবা
           </span>
-          <div className="border-t border-slate-800 w-full" />
+          <div className="border-t border-gray-200 w-full" />
         </div>
 
         {/* Social Login Buttons */}
@@ -200,7 +234,7 @@ export default function SignUpPage() {
           <button
             type="button"
             onClick={() => handleSocialLogin("google")}
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-2xs"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -226,9 +260,9 @@ export default function SignUpPage() {
           <button
             type="button"
             onClick={() => handleSocialLogin("github")}
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-2xs"
           >
-            <svg className="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 fill-current text-gray-900" viewBox="0 0 24 24">
               <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
             </svg>
             <span>GitHub দিয়ে চালিয়ে যান</span>
@@ -236,13 +270,24 @@ export default function SignUpPage() {
         </div>
 
         {/* Link to Sign In */}
-        <div className="text-center pt-2 text-xs sm:text-sm text-slate-400">
+        <div className="text-center pt-2 text-xs sm:text-sm text-gray-500">
           <span>ইতিমধ্যে অ্যাকাউন্ট আছে? </span>
           <Link
             href="/sign-in"
-            className="text-emerald-400 hover:text-emerald-300 font-bold transition-colors"
+            className="text-green-600 hover:text-green-700 font-bold transition-colors"
           >
-            এখানে সাইন ইন করুন
+            সাইন ইন করুন
+          </Link>
+        </div>
+
+        {/* Return to Home link */}
+        <div className="text-center pt-1">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>হোম পেজে ফিরে যান</span>
           </Link>
         </div>
       </div>

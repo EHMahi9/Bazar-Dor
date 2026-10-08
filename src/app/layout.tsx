@@ -16,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="bn" className="dark h-full antialiased scroll-smooth">
-      <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 font-sans">
+    <html lang="bn" className="h-full antialiased scroll-smooth">
+      <body className="min-h-full flex flex-col bg-[#f4f6f8] text-gray-900 font-sans selection:bg-green-100 selection:text-green-800">
         <Providers>
           <Navbar />
           <main className="grow pt-28 sm:pt-32">

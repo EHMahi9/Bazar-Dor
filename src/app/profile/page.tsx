@@ -1,20 +1,25 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
-import { User, Mail, Shield, Edit3, LogOut, ArrowLeft, Calendar } from "lucide-react";
+import { LogOut, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
+  const [name, setName] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   useEffect(() => {
     if (!isPending && !session?.user) {
       toast.error("প্রোফাইল দেখতে অনুগ্রহ করে আগে লগইন করুন।");
       router.push("/sign-in?callbackUrl=/profile");
+    } else if (session?.user?.name) {
+      setName(session.user.name);
     }
   }, [isPending, session, router]);
 
@@ -29,11 +34,40 @@ export default function ProfilePage() {
     }
   };
 
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      toast.error("অনুগ্রহ করে আপনার নাম লিখুন");
+      return;
+    }
+
+    setIsUpdating(true);
+    setUpdateSuccess(false);
+
+    try {
+      const res = await authClient.updateUser({
+        name: name.trim(),
+      });
+
+      if (res?.error) {
+        toast.error(res.error.message || "তথ্য আপডেট করা সম্ভব হয়নি");
+      } else {
+        toast.success("নাম সফলভাবে আপডেট করা হয়েছে!");
+        setUpdateSuccess(true);
+        setTimeout(() => setUpdateSuccess(false), 3000);
+      }
+    } catch {
+      toast.error("তথ্য আপডেট করতে সমস্যা হয়েছে");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   if (isPending) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-4">
-        <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
-        <p className="text-slate-400 text-sm">প্রোফাইল তথ্য লোড হচ্ছে...</p>
+        <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
+        <p className="text-gray-500 text-sm">প্রোফাইল তথ্য লোড হচ্ছে...</p>
       </div>
     );
   }
@@ -45,96 +79,115 @@ export default function ProfilePage() {
   const user = session.user;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      {/* Back button */}
-      <div className="mb-6">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-400 hover:text-emerald-400 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>হোম পেজে ফিরে যান</span>
-        </Link>
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8">
+      {/* Header */}
+      <div className="text-center space-y-1.5">
+        <h1 className="text-2xl sm:text-3xl font-black text-gray-900">
+          আমার প্রোফাইল
+        </h1>
+        <p className="text-sm text-gray-500">
+          আপনার অ্যাকাউন্টের তথ্য ও সেটিংস দেখুন
+        </p>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
-        {/* Profile Card Header */}
-        <div className="flex flex-col sm:flex-row items-center gap-5 pb-6 border-b border-slate-800 text-center sm:text-left">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 text-emerald-400 flex items-center justify-center text-3xl sm:text-4xl font-black shadow-lg">
-            {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-          </div>
-          <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-black text-white">{user.name || "নামহীন ব্যবহারকারী"}</h1>
-            <p className="text-xs sm:text-sm text-slate-400 flex items-center justify-center sm:justify-start gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{user.email}</span>
+      {/* Top User Info Card (Figma Style) */}
+      <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-7 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-5">
+        <div className="flex items-center gap-4 text-center sm:text-left">
+          {user.image ? (
+            <img
+              src={user.image}
+              alt={user.name || "User"}
+              className="w-16 h-16 rounded-full object-cover border border-gray-200 shadow-sm"
+            />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center text-2xl font-black shadow-sm shrink-0">
+              {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+            </div>
+          )}
+
+          <div className="space-y-0.5">
+            <h2 className="text-lg font-bold text-gray-900">
+              {user.name || "নামহীন ব্যবহারকারী"}
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-500 font-mono">
+              {user.email}
             </p>
-            <div className="pt-1">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-semibold">
-                <Shield className="w-3 h-3" />
-                <span>সক্রিয় অ্যাকাউন্ট</span>
-              </span>
-            </div>
           </div>
         </div>
 
-        {/* Account Details Overview */}
-        <div className="space-y-3">
-          <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-            ব্যক্তিগত তথ্য বিবরণী
-          </h2>
-          <div className="grid grid-cols-1 gap-3">
-            <div className="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <User className="w-4 h-4 text-slate-400" />
-                <span className="text-xs sm:text-sm text-slate-400">নাম</span>
-              </div>
-              <span className="text-xs sm:text-sm font-semibold text-white">
-                {user.name || "তথ্য নেই"}
-              </span>
-            </div>
+        {/* Red outline Sign Out Button matching Figma */}
+        <button
+          onClick={handleSignOut}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-red-200 hover:border-red-300 text-red-600 hover:bg-red-50 text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-sm active:scale-95"
+        >
+          <LogOut className="w-3.5 h-3.5" />
+          <span>← সাইন আউট</span>
+        </button>
+      </div>
 
-            <div className="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-slate-400" />
-                <span className="text-xs sm:text-sm text-slate-400">ইমেইল</span>
-              </div>
-              <span className="text-xs sm:text-sm font-semibold text-white">
-                {user.email}
-              </span>
-            </div>
+      {/* Bottom Information Card (Figma Style) */}
+      <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 shadow-sm space-y-5">
+        <h3 className="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">
+          তথ্য
+        </h3>
 
-            <div className="bg-slate-950/70 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Calendar className="w-4 h-4 text-slate-400" />
-                <span className="text-xs sm:text-sm text-slate-400">মেম্বারশিপ</span>
-              </div>
-              <span className="text-xs sm:text-sm font-semibold text-emerald-400">
-                বাজার দর সদস্য
-              </span>
-            </div>
+        {updateSuccess && (
+          <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs sm:text-sm font-medium flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span>তথ্য সফলভাবে হালনাগাদ করা হয়েছে!</span>
           </div>
-        </div>
+        )}
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-3 pt-4 border-t border-slate-800">
-          {/* Challenge C3: Update button navigating to /profile/update */}
-          <Link
-            href="/profile/update"
-            className="w-full sm:flex-1 py-3.5 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
-          >
-            <Edit3 className="w-4 h-4" />
-            <span>তথ্য আপডেট করুন</span>
-          </Link>
+        <form onSubmit={handleUpdate} className="space-y-4">
+          <div className="space-y-1.5">
+            <label htmlFor="name" className="block text-xs font-semibold text-gray-700">
+              নাম
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="আপনার নাম"
+              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors shadow-sm"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-gray-500">
+              ইমেইল অ্যাড্রেস
+            </label>
+            <input
+              type="email"
+              disabled
+              value={user.email}
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500 cursor-not-allowed"
+            />
+          </div>
 
           <button
-            onClick={handleSignOut}
-            className="w-full sm:w-auto py-3.5 px-6 rounded-xl bg-slate-950 hover:bg-rose-500/10 text-rose-400 border border-slate-800 hover:border-rose-500/30 font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+            type="submit"
+            disabled={isUpdating}
+            className="w-full py-3.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition-all shadow-sm active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
-            <LogOut className="w-4 h-4" />
-            <span>লগআউট</span>
+            {isUpdating ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <span>আপডেট</span>
+            )}
           </button>
-        </div>
+        </form>
+      </div>
+
+      <div className="text-center pt-2">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-emerald-600 transition-colors"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>হোম পেজে ফিরে যান</span>
+        </Link>
       </div>
     </div>
   );

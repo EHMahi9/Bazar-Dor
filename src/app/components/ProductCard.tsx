@@ -17,73 +17,65 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       href={`/product/${product.slug || product.id}`}
-      className="group flex flex-col bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-5 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1 relative overflow-hidden"
+      className="group flex flex-col justify-between bg-white hover:bg-gray-50/50 border border-gray-200/90 hover:border-green-400 rounded-2xl p-4 sm:p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 relative"
     >
-      {/* Top row: Category tag & Trend Badge */}
-      <div className="flex items-center justify-between mb-3">
-        <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700/50">
-          <span>{product.categoryIcon || "🏷️"}</span>
-          <span>{product.categoryNameBn || product.category}</span>
-        </span>
-
-        {/* Change Badge */}
-        <span
-          className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${
-            isUp
-              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-              : isDown
-              ? "bg-rose-500/15 text-rose-400 border border-rose-500/30"
-              : "bg-slate-800 text-slate-400 border border-slate-700"
-          }`}
-        >
-          {isUp ? (
-            <>
-              <TrendingUp className="w-3.5 h-3.5" />
-              <span>▲ {toBengaliNumber(product.change.pct)}%</span>
-            </>
-          ) : isDown ? (
-            <>
-              <TrendingDown className="w-3.5 h-3.5" />
-              <span>▼ {toBengaliNumber(product.change.pct)}%</span>
-            </>
-          ) : (
-            <>
-              <Minus className="w-3.5 h-3.5" />
-              <span>—০.০%</span>
-            </>
-          )}
-        </span>
-      </div>
-
-      {/* Product Image / Illustration & Name */}
-      <div className="flex items-center gap-4 my-2">
-        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-3xl sm:text-4xl shadow-inner group-hover:scale-110 transition-transform duration-300 shrink-0">
+      {/* Upper area: Image & Info */}
+      <div className="flex items-start gap-3.5">
+        {/* Left: Thumbnail Icon/Image */}
+        <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-3xl shrink-0 group-hover:scale-105 transition-transform">
           {product.image || "📦"}
         </div>
+
+        {/* Middle: Name & Unit */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-lg sm:text-xl text-white group-hover:text-emerald-400 transition-colors truncate">
+          <h3 className="font-bold text-base sm:text-lg text-gray-900 group-hover:text-green-600 transition-colors truncate">
             {product.nameBn}
           </h3>
-          <p className="text-xs sm:text-sm text-slate-400 font-medium">
+          <p className="text-xs text-gray-500 font-medium mt-0.5">
             {formatUnit(product.unit)}
           </p>
         </div>
       </div>
 
-      {/* Divider */}
-      <div className="w-full h-px bg-slate-800 my-3" />
-
-      {/* Price row */}
-      <div className="mt-auto flex items-baseline justify-between pt-1">
-        <span className="text-xs text-slate-400 font-medium">আজকের দাম</span>
-        <div className="text-right">
-          <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono tracking-tight">
-            {toBengaliNumber(product.today)}
-          </span>
-          <span className="text-xs sm:text-sm text-slate-300 font-bold ml-1">
-            টাকা
-          </span>
+      {/* Bottom Area: Price & Percentage Change matching Figma */}
+      <div className="mt-4 pt-3 border-t border-gray-100 flex items-end justify-between">
+        <div>
+          <span className="block text-[11px] text-gray-400 font-medium">আজকের দাম</span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-xl sm:text-2xl font-black text-gray-900 font-mono tracking-tight">
+              {toBengaliNumber(product.today)}
+            </span>
+            <span className="text-xs text-gray-600 font-bold">টাকা</span>
+          </div>
         </div>
+
+        {/* Change Badge */}
+        <span
+          className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-md border ${
+            isUp
+              ? "text-red-600 bg-red-50 border-red-200/70"
+              : isDown
+              ? "text-emerald-700 bg-emerald-50 border-emerald-200/70"
+              : "text-gray-600 bg-gray-100 border-gray-200"
+          }`}
+        >
+          {isUp ? (
+            <>
+              <TrendingUp className="w-3 h-3" />
+              <span>▲ {toBengaliNumber(product.change.pct)}%</span>
+            </>
+          ) : isDown ? (
+            <>
+              <TrendingDown className="w-3 h-3" />
+              <span>▼ {toBengaliNumber(product.change.pct)}%</span>
+            </>
+          ) : (
+            <>
+              <Minus className="w-3 h-3" />
+              <span>—০.০%</span>
+            </>
+          )}
+        </span>
       </div>
     </Link>
   );
