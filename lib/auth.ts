@@ -12,10 +12,7 @@ if (typeof process !== "undefined" && process.env.NODE_ENV !== "production") {
   }
 }
 
-const defaultMongoUri =
-  "mongodb+srv://mahi24235001_db_user:ERuLMxUBpxYP01Ft@first.shcpuau.mongodb.net/?appName=First";
-
-const mongoUri = process.env.BETTER_AUTH_DB_URL || process.env.MONGODB_URI || defaultMongoUri;
+const mongoUri = process.env.BETTER_AUTH_DB_URL || process.env.MONGODB_URI || "";
 
 // Global cached MongoClient for serverless environments (prevents connection leaks and ensures reuse)
 declare global {
@@ -24,7 +21,7 @@ declare global {
 }
 
 if (!global._mongoClientPromise) {
-  global._mongoClientPromise = new MongoClient(mongoUri, {
+  global._mongoClientPromise = new MongoClient(mongoUri || "mongodb://localhost:27017/bazardor", {
     connectTimeoutMS: 10000,
     serverSelectionTimeoutMS: 10000,
     maxPoolSize: 10,
@@ -42,7 +39,7 @@ const getBaseURL = () => {
 };
 
 export const auth = betterAuth({
-  secret: process.env.BETTER_AUTH_SECRET || "th4oXXn8eqrxt4qo8Utdng9fTjnBbA0m",
+  secret: process.env.BETTER_AUTH_SECRET,
   baseURL: getBaseURL(),
   database: mongodbAdapter(db, {
     client,
