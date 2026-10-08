@@ -15,6 +15,7 @@ const client = new MongoClient(mongoUri);
 const db = client.db("bazardor_db");
 
 export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   database: mongodbAdapter(db, {
     client,
   }),
