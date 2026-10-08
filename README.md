@@ -12,8 +12,8 @@
 
 ## 🔗 লাইভ লিংক ও রিপোজিটরি (Submission Links)
 
-- 🌐 **লাইভ ওয়েবসাইট (Live URL):** [https://next-js-betterauth.vercel.app](https://next-js-betterauth.vercel.app) *(Deploy on Vercel/Netlify)*
-- 💻 **গিটহাব রিপোজিটরি (GitHub Repo):** [https://github.com/mahirfaysal/b14-a7-bazardor](https://github.com/mahirfaysal/b14-a7-bazardor)
+- 🌐 **লাইভ ওয়েবসাইট (Live URL):** [https://bazar-dor-plum.vercel.app](https://bazar-dor-plum.vercel.app) *(Deploy on Vercel/Netlify)*
+- 💻 **গিটহাব রিপোজিটরি (GitHub Repo):** [https://github.com/EHMahi9/Bazar-Dor](https://github.com/EHMahi9/Bazar-Dor)
 
 ---
 
@@ -72,8 +72,8 @@
 
 ### ১. ক্লোন করুন:
 ```bash
-git clone https://github.com/mahirfaysal/b14-a7-bazardor.git
-cd b14-a7-bazardor
+git clone https://github.com/EHMahi9/Bazar-Dor.git
+cd Bazar-Dor
 ```
 
 ### ২. ডিপেন্ডেন্সি ইন্সটল করুন:
