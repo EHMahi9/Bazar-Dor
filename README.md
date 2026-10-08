@@ -112,4 +112,4 @@ npm run dev
 
 - **ব্যাচ:** Batch 14 (Assignment 7)
 - **প্রজেক্টের নাম:** বাজার দর (Bazar Dor)
-- **দল/ডেভেলপার:** মাহির ফয়সাল
+- **ডেভেলপার:** Ebnul Hasan Mahi (ইবনুল হাসান মাহী) — [@EHMahi9](https://github.com/EHMahi9)
