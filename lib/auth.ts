@@ -14,8 +14,15 @@ const mongoUri = process.env.BETTER_AUTH_DB_URL || "";
 const client = new MongoClient(mongoUri);
 const db = client.db("bazardor_db");
 
+const getBaseURL = () => {
+  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  if (process.env.NODE_ENV === "production") return "https://bazar-dor-mahi.vercel.app";
+  return "http://localhost:3000";
+};
+
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: getBaseURL(),
   database: mongodbAdapter(db, {
     client,
   }),
