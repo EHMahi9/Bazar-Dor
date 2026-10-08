@@ -18,18 +18,17 @@ export default function Hero() {
               <span>নিত্যপ্রয়োজনীয় পণ্যের নির্ভরযোগ্য বাজার মূল্য</span>
             </div>
 
-            {/* Main Heading */}
+            {/* Main Heading matching Figma */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15]">
-              বাংলাদেশের দৈনন্দিন{" "}
+              আজকের বাজারের দাম{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
-                বাজার দর
-              </span>{" "}
-              জানুন সবার আগে
+                এক নজরে
+              </span>
             </h1>
 
-            {/* Subtitle */}
+            {/* Subtitle matching Figma */}
             <p className="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              প্রতিদিনের তাজা চাল, ডাল, তেল, শাকসবজি, মাছ ও মাংসের দাম ও দর পরিবর্তনের তথ্য এক ক্লিকেই। বিভাগভিত্তিক ও পাইকারি বাজারের নির্ভরযোগ্য বিশ্লেষণ।
+              চাল, ডাল, তেল, সবজি, মাছ, মাংস, ডিম ও মসলার দাম — বাজারভিত্তিক বিস্তারিত, গড়, সর্বনিম্ন-সর্বাধিক এবং দামের পরিবর্তন এক জায়গায়।
             </p>
 
             {/* CTA Button and Features */}
@@ -67,63 +66,33 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right Column: Hero Visual Graphic */}
+          {/* Right Column: Hero Visual Image from Figma */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-md bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 p-6 rounded-3xl shadow-2xl">
-              {/* Highlight Card 1 */}
-              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-2xl">
-                    🍚
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-white text-base">স্বর্ণমাছি চাল</h4>
-                    <p className="text-xs text-slate-400">প্রতি কেজি (খুচরা)</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-lg font-black text-emerald-400 font-mono">১৪৮ টাকা</span>
-                  <span className="block text-[11px] text-emerald-400 font-bold">▲ ২.১%</span>
-                </div>
+            <div className="relative w-full max-w-md bg-gradient-to-br from-slate-900/90 to-slate-950 border border-slate-800 p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center group">
+              <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center">
+                <img
+                  src="/bazar-hero.png"
+                  alt="বাজার দর হিরো ব্যানার"
+                  className="max-h-full max-w-full object-contain drop-shadow-[0_15px_30px_rgba(16,185,129,0.2)] group-hover:scale-105 transition-transform duration-500"
+                />
               </div>
 
-              {/* Highlight Card 2 */}
-              <div className="flex items-center justify-between py-4 border-b border-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-2xl">
-                    🧅
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-white text-base">দেশি পেঁয়াজ</h4>
-                    <p className="text-xs text-slate-400">প্রতি কেজি (খুচরা)</p>
-                  </div>
+              {/* Floating Quick Stats Badge */}
+              <div className="w-full mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-around text-xs">
+                <div>
+                  <span className="block text-emerald-400 font-black text-base font-mono">৩৩+</span>
+                  <span className="text-slate-400">নিত্যদিনের পণ্য</span>
                 </div>
-                <div className="text-right">
-                  <span className="text-lg font-black text-rose-400 font-mono">১১০ টাকা</span>
-                  <span className="block text-[11px] text-rose-400 font-bold">▼ ৪.১%</span>
+                <div className="w-px h-8 bg-slate-800" />
+                <div>
+                  <span className="block text-teal-400 font-black text-base font-mono">১২+</span>
+                  <span className="text-slate-400">বাজার অন্তর্ভুক্ত</span>
                 </div>
-              </div>
-
-              {/* Highlight Card 3 */}
-              <div className="flex items-center justify-between pt-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-2xl">
-                    🐟
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-white text-base">ইলিশ মাছ</h4>
-                    <p className="text-xs text-slate-400">প্রতি কেজি (১ কেজি সাইজ)</p>
-                  </div>
+                <div className="w-px h-8 bg-slate-800" />
+                <div>
+                  <span className="block text-amber-400 font-black text-base font-mono">১০০%</span>
+                  <span className="text-slate-400">রিয়েল-টাইম</span>
                 </div>
-                <div className="text-right">
-                  <span className="text-lg font-black text-emerald-400 font-mono">১,৪৫০ টাকা</span>
-                  <span className="block text-[11px] text-emerald-400 font-bold">▲ ৫.০%</span>
-                </div>
-              </div>
-
-              {/* Float Badge */}
-              <div className="absolute -bottom-4 -left-4 bg-emerald-500 text-slate-950 px-4 py-2 rounded-xl font-bold text-xs shadow-lg flex items-center gap-1.5">
-                <span>🔥 আজ দাম বৃদ্ধির শীর্ষে শাকসবজি ও মাছ</span>
               </div>
             </div>
           </div>

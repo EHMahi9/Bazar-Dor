@@ -90,6 +90,9 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
     const min = Math.min(...mins);
     const max = Math.max(...maxs);
 
+    const minMarket = product.markets.find((m) => m.min === min);
+    const maxMarket = product.markets.find((m) => m.max === max);
+
     const totalSum = product.markets.reduce(
       (acc, m) => acc + (m.min + m.max) / 2,
       0
@@ -98,7 +101,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
 
     const divs = Array.from(new Set(product.markets.map((m) => m.division)));
 
-    return { min, max, avg, divisions: divs };
+    return { min, max, avg, divisions: divs, minMarket, maxMarket };
   }, [product]);
 
   // Filtered markets by selected division
@@ -279,14 +282,16 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
         </div>
       </div>
 
-      {/* Price Summary (Minimum, Maximum, Average) */}
+      {/* Price Summary (Minimum, Maximum, Average) - Figma matching */}
       <div>
-        <h2 className="text-lg sm:text-xl font-black text-white mb-4 flex items-center gap-2">
-          <span>মূল্য সংক্ষিপ্তসার</span>
-          <span className="text-xs text-slate-400 font-normal">
-            (বাজারভিত্তিক আজকের সর্বনিম্ন, সর্বোচ্চ ও গড় দর)
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-4">
+          <h2 className="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+            <span>দামের সারসংক্ষেপ</span>
+          </h2>
+          <span className="text-xs text-slate-400 font-medium">
+            প্রতি {formatUnit(product.unit)}-এর হিসাবে
           </span>
-        </h2>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
           {/* Minimum Price */}
@@ -301,7 +306,10 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
               <span className="text-sm text-slate-300 font-bold">টাকা</span>
             </div>
             <p className="text-xs text-slate-400 mt-2">
-              সকল বাজারের মধ্যে আজকের সর্বনিম্ন কোটেশন
+              সবচেয়ে কম দামের বাজার:{" "}
+              <span className="text-teal-300 font-semibold">
+                {priceStats.minMarket?.market || "নির্ধারিত বাজার"}
+              </span>
             </p>
           </div>
 
@@ -333,7 +341,10 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
               <span className="text-sm text-slate-300 font-bold">টাকা</span>
             </div>
             <p className="text-xs text-slate-400 mt-2">
-              সকল বাজারের মধ্যে আজকের সর্বোচ্চ কোটেশন
+              সবচেয়ে বেশি দামের বাজার:{" "}
+              <span className="text-amber-300 font-semibold">
+                {priceStats.maxMarket?.market || "নির্ধারিত বাজার"}
+              </span>
             </p>
           </div>
         </div>

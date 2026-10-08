@@ -77,9 +77,16 @@ export default function Navbar() {
           <div className="flex flex-col justify-center">
             <Link
               href="/"
-              className="flex items-center gap-2 group transition-transform active:scale-95"
+              className="flex items-center gap-2.5 group transition-transform active:scale-95"
             >
-              <span className="text-2xl sm:text-3xl">🛒</span>
+              <img
+                src="/logo-icon.png"
+                alt="বাজার দর"
+                className="w-8 h-8 sm:w-9 sm:h-9 object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
               <span className="text-xl sm:text-2xl font-black tracking-tight text-white group-hover:text-emerald-400 transition-colors">
                 বাজার <span className="text-emerald-400">দর</span>
               </span>

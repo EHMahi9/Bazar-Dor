@@ -12,7 +12,7 @@
 
 ## 🔗 লাইভ লিংক ও রিপোজিটরি (Submission Links)
 
-- 🌐 **লাইভ ওয়েবসাইট (Live URL):** [https://bazar-dor-plum.vercel.app](https://bazar-dor-plum.vercel.app) *(Deploy on Vercel/Netlify)*
+- 🌐 **লাইভ ওয়েবসাইট (Live URL):** [https://bazar-dor-mahi.vercel.app](https://bazar-dor-mahi.vercel.app)
 - 💻 **গিটহাব রিপোজিটরি (GitHub Repo):** [https://github.com/EHMahi9/Bazar-Dor](https://github.com/EHMahi9/Bazar-Dor)
 
 ---
