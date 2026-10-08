@@ -1,5 +1,31 @@
-import { auth } from "../../../../../lib/auth";
-// path to your auth file
+import { auth } from "@/lib/auth";
 import { toNextJsHandler } from "better-auth/next-js";
+import { NextRequest, NextResponse } from "next/server";
 
-export const { POST, GET } = toNextJsHandler(auth);
+const handlers = toNextJsHandler(auth);
+
+export const GET = async (req: NextRequest) => {
+  try {
+    return await handlers.GET(req);
+  } catch (err: unknown) {
+    const error = err as Error;
+    console.error("Auth GET error:", error);
+    return NextResponse.json(
+      { error: error?.message || String(err), stack: error?.stack },
+      { status: 500 }
+    );
+  }
+};
+
+export const POST = async (req: NextRequest) => {
+  try {
+    return await handlers.POST(req);
+  } catch (err: unknown) {
+    const error = err as Error;
+    console.error("Auth POST error:", error);
+    return NextResponse.json(
+      { error: error?.message || String(err), stack: error?.stack },
+      { status: 500 }
+    );
+  }
+};

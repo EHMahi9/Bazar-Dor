@@ -3,7 +3,7 @@
 import React, { use, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/../lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { Product } from "@/types";
 import { formatUnit, toBengaliNumber } from "@/lib/utils";
 import toast from "react-hot-toast";

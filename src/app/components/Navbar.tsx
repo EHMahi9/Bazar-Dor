@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { authClient } from "@/../lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { Category, Product } from "@/types";
 import { getBanglaTodayDate, toBengaliNumber } from "@/lib/utils";
 import toast from "react-hot-toast";
