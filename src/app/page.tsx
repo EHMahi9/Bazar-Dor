@@ -15,6 +15,8 @@ import {
   Filter,
 } from "lucide-react";
 
+import { fetchProducts, fetchCategories } from "@/lib/api";
+
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -30,26 +32,14 @@ export default function HomePage() {
       setIsLoading(true);
       try {
         const [prodsRes, catsRes] = await Promise.all([
-          fetch("https://api.api-store.workers.dev/api/bazardor/products")
-            .then((r) => r.json())
-            .catch(() =>
-              fetch("https://api.abcz.workers.dev/api/bazardor/products").then((r) =>
-                r.json()
-              )
-            ),
-          fetch("https://api.api-store.workers.dev/api/bazardor/categories")
-            .then((r) => r.json())
-            .catch(() =>
-              fetch("https://api.abcz.workers.dev/api/bazardor/categories").then((r) =>
-                r.json()
-              )
-            ),
+          fetchProducts(),
+          fetchCategories(),
         ]);
 
-        if (Array.isArray(prodsRes)) {
+        if (Array.isArray(prodsRes) && prodsRes.length > 0) {
           setProducts(prodsRes);
         }
-        if (Array.isArray(catsRes)) {
+        if (Array.isArray(catsRes) && catsRes.length > 0) {
           setCategories(catsRes);
         }
       } catch (err) {

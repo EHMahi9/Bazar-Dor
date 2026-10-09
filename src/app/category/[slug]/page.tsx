@@ -9,6 +9,8 @@ import { Category, Product, SortOption } from "@/types";
 import { sortProducts, toBengaliNumber } from "@/lib/utils";
 import { ArrowLeft, Home } from "lucide-react";
 
+import { fetchCategories, fetchProductsByCategory } from "@/lib/api";
+
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -26,32 +28,15 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     async function loadCategoryData() {
       setIsLoading(true);
       try {
-        // Fetch categories to get title and icon
-        const catsRes = await fetch(
-          "https://api.api-store.workers.dev/api/bazardor/categories"
-        )
-          .then((r) => r.json())
-          .catch(() =>
-            fetch("https://api.abcz.workers.dev/api/bazardor/categories").then((r) =>
-              r.json()
-            )
-          );
+        const [catsRes, prodsRes] = await Promise.all([
+          fetchCategories(),
+          fetchProductsByCategory(slug),
+        ]);
 
         if (Array.isArray(catsRes)) {
           const currentCat = catsRes.find((c: Category) => c.slug === slug);
           setCategory(currentCat || null);
         }
-
-        // Fetch products by category
-        const prodsRes = await fetch(
-          `https://api.api-store.workers.dev/api/bazardor/products?category=${slug}`
-        )
-          .then((r) => r.json())
-          .catch(() =>
-            fetch(
-              `https://api.abcz.workers.dev/api/bazardor/products?category=${slug}`
-            ).then((r) => r.json())
-          );
 
         if (Array.isArray(prodsRes)) {
           setProducts(prodsRes);

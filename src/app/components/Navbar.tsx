@@ -17,6 +17,7 @@ import {
   TrendingDown,
   Minus,
 } from "lucide-react";
+import { fetchProducts } from "@/lib/api";
 
 const defaultCategories: Category[] = [
   { id: "chal", slug: "chal", nameBn: "চাল", icon: "🍚" },
@@ -42,11 +43,10 @@ export default function Navbar() {
   useEffect(() => {
     setTodayDate(getBanglaTodayDate());
 
-    // Fetch products for marquee ticker
-    fetch("https://api.api-store.workers.dev/api/bazardor/products")
-      .then((res) => res.json())
+    // Fetch products for marquee ticker using resilient fetchProducts
+    fetchProducts()
       .then((data) => {
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           setTickerProducts(data);
         }
       })

@@ -19,6 +19,7 @@ import {
   ArrowRight,
   Sparkles,
 } from "lucide-react";
+import { fetchProductBySlug } from "@/lib/api";
 
 interface ProductDetailsPageProps {
   params: Promise<{ slug: string }>;
@@ -46,23 +47,11 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
 
   // Load product data
   useEffect(() => {
-    async function fetchProduct() {
+    async function loadProduct() {
       setIsLoading(true);
       try {
-        const res = await fetch("https://api.api-store.workers.dev/api/bazardor/products")
-          .then((r) => r.json())
-          .catch(() =>
-            fetch("https://api.abcz.workers.dev/api/bazardor/products").then((r) =>
-              r.json()
-            )
-          );
-
-        if (Array.isArray(res)) {
-          const found = res.find(
-            (p: Product) => p.slug === slug || p.id.toString() === slug
-          );
-          setProduct(found || null);
-        }
+        const found = await fetchProductBySlug(slug);
+        setProduct(found);
       } catch (err) {
         console.error("Failed to fetch product:", err);
       } finally {
@@ -70,7 +59,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
       }
     }
 
-    fetchProduct();
+    loadProduct();
   }, [slug]);
 
   // Calculations for market prices
