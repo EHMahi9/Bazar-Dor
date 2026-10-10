@@ -1,7 +1,9 @@
 import { Category, Product } from "@/types";
 
-export const BASE_URL_1 = "https://api.api-store.workers.dev/api/bazardor";
-export const BASE_URL_2 = "https://api.abcz.workers.dev/api/bazardor";
+export const PRIMARY_API_URL = "https://openapi.programming-hero.com/api/bazardor";
+export const BASE_URL_1 = "https://openapi.programming-hero.com/api/bazardor";
+export const BASE_URL_OLD_1 = "https://api.api-store.workers.dev/api/bazardor";
+export const BASE_URL_OLD_2 = "https://api.abcz.workers.dev/api/bazardor";
 
 export const FALLBACK_CATEGORIES: Category[] = [
   { id: "chal", slug: "chal", nameBn: "চাল", icon: "🍚" },
@@ -710,11 +712,12 @@ export const FALLBACK_PRODUCTS: Product[] = [
  * Strictly tries BASE_URL_1 first, then BASE_URL_2.
  * If both fail / return rate limit HTML error, gracefully returns fallback.
  */
-async function safeFetchJson<T>(url1: string, url2: string, fallback: T): Promise<T> {
-  const urls = [url1, url2];
+async function safeFetchJson<T>(endpoint: string, fallback: T): Promise<T> {
+  const baseUrls = [PRIMARY_API_URL, BASE_URL_OLD_1, BASE_URL_OLD_2];
 
-  for (const url of urls) {
+  for (const base of baseUrls) {
     try {
+      const url = `${base}${endpoint}`;
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 4000);
 
@@ -726,7 +729,7 @@ async function safeFetchJson<T>(url1: string, url2: string, fallback: T): Promis
 
       if (res.ok) {
         const text = await res.text();
-        // Ensure it's valid JSON, not Cloudflare HTML error
+        // Ensure it's valid JSON, not HTML error
         if (text.startsWith("{") || text.startsWith("[")) {
           const json = JSON.parse(text);
           if (json && (Array.isArray(json) || typeof json === "object")) {
@@ -739,22 +742,20 @@ async function safeFetchJson<T>(url1: string, url2: string, fallback: T): Promis
     }
   }
 
-  // Graceful fallback when both remote URLs are rate-limited / down
+  // Graceful fallback when remote URLs are rate-limited or down
   return fallback;
 }
 
 export async function fetchProducts(): Promise<Product[]> {
   return safeFetchJson<Product[]>(
-    `${BASE_URL_1}/products`,
-    `${BASE_URL_2}/products`,
+    "/products",
     FALLBACK_PRODUCTS
   );
 }
 
 export async function fetchCategories(): Promise<Category[]> {
   return safeFetchJson<Category[]>(
-    `${BASE_URL_1}/categories`,
-    `${BASE_URL_2}/categories`,
+    "/categories",
     FALLBACK_CATEGORIES
   );
 }
@@ -762,28 +763,32 @@ export async function fetchCategories(): Promise<Category[]> {
 export async function fetchProductsByCategory(categorySlug: string): Promise<Product[]> {
   const fallbackList = FALLBACK_PRODUCTS.filter((p) => p.category === categorySlug);
   return safeFetchJson<Product[]>(
-    `${BASE_URL_1}/products?category=${categorySlug}`,
-    `${BASE_URL_2}/products?category=${categorySlug}`,
+    `/products?category=${categorySlug}`,
     fallbackList
   );
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product | null> {
-  // First try fetching single product API
-  const singleFallback =
-    FALLBACK_PRODUCTS.find((p) => p.slug === slug || p.id.toString() === slug) || null;
-
-  const result = await safeFetchJson<Product | null>(
-    `${BASE_URL_1}/products/${slug}`,
-    `${BASE_URL_2}/products/${slug}`,
-    singleFallback
-  );
-
-  if (result && result.nameBn) {
-    return result;
+  // If slug is numeric, /products/:id directly works on new API
+  if (/^\d+$/.test(slug)) {
+    const directResult = await safeFetchJson<Product | null>(
+      `/products/${slug}`,
+      null
+    );
+    if (directResult && directResult.nameBn) {
+      return directResult;
+    }
   }
 
-  // Fallback to searching all products
+  // Search through all products list (handles string slugs e.g. sorno-machi-chal or shwarnamachi-chal)
   const allProds = await fetchProducts();
-  return allProds.find((p) => p.slug === slug || p.id.toString() === slug) || null;
+  const found = allProds.find((p) => p.slug === slug || p.id.toString() === slug);
+  if (found) {
+    return found;
+  }
+
+  // Fallback check
+  return (
+    FALLBACK_PRODUCTS.find((p) => p.slug === slug || p.id.toString() === slug) || null
+  );
 }

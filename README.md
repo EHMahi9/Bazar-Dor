@@ -14,6 +14,7 @@
 
 - 🌐 **লাইভ ওয়েবসাইট (Live URL):** [https://bazar-dor-mahi.vercel.app](https://bazar-dor-mahi.vercel.app)
 - 💻 **গিটহাব রিপোজিটরি (GitHub Repo):** [https://github.com/EHMahi9/Bazar-Dor](https://github.com/EHMahi9/Bazar-Dor)
+- 📡 **অফিশিয়াল লাইভ ডেটা API (Official API):** [https://openapi.programming-hero.com/api/bazardor](https://openapi.programming-hero.com/api/bazardor)
 
 ---
 
